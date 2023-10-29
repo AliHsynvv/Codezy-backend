@@ -7,7 +7,7 @@ public class TrainingEntityDto {
 
     int id;
 
-    byte icon;
+    String icon;
 
     String time;
 

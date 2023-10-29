@@ -6,6 +6,7 @@ import com.company.codezybackend.service.inter.TrainingInter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class TrainingController {
     private final TrainingInter trainingInter;
 
     @PostMapping("/create")
-    public void create(@RequestBody TrainingEntityDto trainingDto) {
-        trainingInter.create(trainingDto);
+    public void create( @RequestParam MultipartFile file, @RequestBody TrainingEntityDto trainingDto) {
+        trainingInter.create(file, trainingDto);
 
     }
 

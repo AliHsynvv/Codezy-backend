@@ -9,8 +9,13 @@ import com.company.codezybackend.service.inter.TrainingInter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,12 +27,22 @@ public class TrainingImpl implements TrainingInter {
 
 
     @Override
-    public void create(TrainingEntityDto trainingDto) {
-        TrainingEntity training = TrainingEntity.builder()
-                .icon(trainingDto.getIcon())
-                .time(trainingDto.getTime())
-                .name(trainingDto.getName())
-                .build();
+    public void create(MultipartFile file, TrainingEntityDto trainingDto) {
+        TrainingEntity training = null;
+
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        if (fileName.contains("..")){
+            throw new TrainingException(ErrorCodeEnum.INVALID_FILE);
+        }
+        try {
+            training = TrainingEntity.builder()
+                    .icon(Base64.getEncoder().encodeToString(file.getBytes()))
+                    .time(trainingDto.getTime())
+                    .name(trainingDto.getName())
+                    .build();
+        } catch (IOException e) {
+            throw new TrainingException(ErrorCodeEnum.UNKNOWN_ERROR);
+        }
         trainingRepo.save(training);
     }
 
